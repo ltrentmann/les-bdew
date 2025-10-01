@@ -1,0 +1,47 @@
+;building function;heated;iwu category;iwu mapping;use_type_1;use_type_2;use_type_3
+4;Gebäude für Wirtschaft oder Gewerbe;partially;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+7;Überdachung;no;;;;;
+8;Garage;no;;;;;
+9;Nach Quellenlage nicht zu spezifizieren;partially;;NWG_G1;OFFICE;RETAIL;RESTAURANT
+10;Umformer;no;;;;;
+11;Brücke;no;;;;;
+12;Gebäude für öffentliche Zwecke;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+15;Kapelle;no;;;;;
+16;Kirche;no;;NWG_1;OFFICE;;
+17;Gebäude für Bildung und Forschung;yes;Gebäude für Forschung und Hochschullehre (2);NWG_2;UNIVERSITY;OFFICE;
+18;Kinderkrippe, Kindergarten, Kindertagesstätte;yes;Schule, Kindertagesstätte und sonstiges Betreuungsgebäude (4);NWG_4;SCHOOL;;
+19;Feuerwehr;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+20;Wehr;no;;;;;
+21;Rathaus;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+22;Heilanstalt, Pflegeanstalt, Pflegestation;yes;Gebäude für Gesundheit und Pflege (3);NWG_3;HOSPITAL;;
+23;Historische Mauer;no;;;;;
+24;Wasserbehälter;no;;;;;
+25;Kaserne;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+26;Krankenhaus;yes;Gebäude für Gesundheit und Pflege (3);NWG_3;HOSPITAL;;
+27;Tiefgarage;no;;;;;
+28;Schloss;no;;;;;
+29;Parkhaus;no;;;;;
+30;Bahnhofsgebäude;no;;;;;
+31;Polizei;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+32;Burg, Festung;no;;;;;
+33;Kloster;yes;Beherbergungs- oder Unterbringungsgebäude, Gastronomie- oder Verpflegungsgebäude (7);NWG_7;RESTAURANT;;
+34;Justizvollzugsanstalt;yes;Beherbergungs- oder Unterbringungsgebäude, Gastronomie- oder Verpflegungsgebäude (7);NWG_7;RESTAURANT;;
+35;Kreisverwaltung;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+36;Jugendherberge;yes;Beherbergungs- oder Unterbringungsgebäude, Gastronomie- oder Verpflegungsgebäude (7);NWG_7;RESTAURANT;;
+37;Sanatorium;yes;Gebäude für Gesundheit und Pflege (3);NWG_3;HOSPITAL;;
+38;Touristisches Informationszentrum;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+39;Staumauer;no;;;;;
+40;Moschee;no;;;;;
+41;Kammerschleuse;no;;;;;
+42;Bezirksregierung;yes;Büro-, Verwaltungs- oder Amtsgebäude (1);NWG_1;OFFICE;;
+43;Synagoge;no;;;;;
+44;Schutzgalerie, Einhausung;no;;;;;
+45;Tempel;no;;;;;
+46;icts_1;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+47;icts_2;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+48;icts_3;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+49;icts_4;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+50;icts_5;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+51;icts_6;yes;(1) Dienstleistungsgebäude, HK_Geb = (1) bis (7) und (9);NWG_G1;OFFICE;RETAIL;RESTAURANT
+52;Parkhaus;no;;;;;
+53;icts_manual;yes;Manually Assigned;NWG_G1;OFFICE;RETAIL;RESTAURANT
