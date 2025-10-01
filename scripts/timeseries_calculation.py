@@ -111,7 +111,7 @@ def timeseries_calculation(demand, year, RUNID):
     demand_elec = demand_elec.resample("H").mean()
 
     # export df_shape as shapefile
-    output_dir = r"/results"
+    output_dir = f"results/"
     # Create the directory if it doesn't exist
     os.makedirs(output_dir + f"{RUNID}/" + 'shapefile/', exist_ok=True)
     # Now you can save your shapefile
