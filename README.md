@@ -102,7 +102,7 @@ Be aware that the types in Python code are strings in **lowercase**.
 
 ## Installation
 
-1. Create and activate enviroment. Example with anaconda:   `conda activate lesbdew`
+1. Create and activate enviroment. Example with anaconda:   `conda activate bdewles`
 2. cd to folder with github clone
 3. `pip install -e .`
 
