@@ -53,11 +53,19 @@ def demand(
     # Calculate heated area
     df_shape['heated_area'] = df_shape['AREA_CALC'] * df_shape['floors_ag'] * df_shape['alpha']
 
-    # Lookup specific heat and electricity demand
-    df_shape['spez_heat'] = df_shape.apply(
-        lambda x: params.spez_heat_bj.loc[x['type_code']][x['age_code']], 
-        axis=1
-    )
+    # sum heat demand for 1st and 2nd use if they exist
+    def calculate_spez_heat(row, params):
+        total_heat = 0
+        for use in ['1ST_USE', '2ND_USE']:
+            use_val = row.get(use)
+            if pd.notna(use_val) and use_val != 'NONE':
+                # multiply by the share if available (e.g., '1ST_USE_R')
+                share = row.get(f'{use}_R', 1)  # default 1 if not present
+                total_heat += params.spez_heat_bj.loc[use_val, row['age_code']] * share
+        return total_heat
+
+    df_shape['spez_heat'] = df_shape.apply(lambda x: calculate_spez_heat(x, params), axis=1)
+
     df_shape['spez_elec'] = df_shape.apply(
         lambda x: params.spez_elec_type.loc[x['type_code']], 
         axis=1
