@@ -10,7 +10,7 @@ Package to generate heat and electricity timeseries with demandlib based on LOD2
 ## Workflow
 Here you can see the overall workflow of generating building specific load profiles for heat and electricity:
 
-![Overview](https://github.com/ltrentmann/les-bdes/blob/main/description/2024-12-18_data-and-slp-calculation.drawio.svg "Overview")
+![Overview](https://github.com/ltrentmann/les-bdew/blob/main/description/2024-12-18_data-and-slp-calculation.drawio.svg "Overview")
 
 
 ## Timeseries calcualtion

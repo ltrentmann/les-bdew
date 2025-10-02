@@ -3,7 +3,7 @@
 @author: Lennart Trentmann (lennart.trentmann@tum.de); 
          Amedeo Ceruti (amedeo.ceruti@tum.de)
 
-Script to generate yearly GHD heat demand in MWh.
+Script to generate yearly heat and electricity demand in MWh.
 """
 
 import os
