@@ -4,13 +4,13 @@
 
 Package to generate heat and electricity timeseries with demandlib based on LOD2 database
 
-- Date: 22.11.2023
+- Date: 02.10.2025
 - Project: <https://www.enargus.de/pub/bscw.cgi/?op=enargus.eps2&q=HEAT2Q&v=10&id=8909299>
 
 ## Workflow
 Here you can see the overall workflow of generating building specific load profiles for heat and electricity:
 
-![Overview](https://github.com/ltrentmann/les-bdew/blob/main/description/2024-12-18_data-and-slp-calculation.drawio.svg "Overview")
+<img src="https://github.com/ltrentmann/les-bdew/blob/main/description/2024-12-18_data-and-slp-calculation.drawio.svg" alt="Overview" width="400">
 
 
 ## Timeseries calcualtion
@@ -112,7 +112,8 @@ Be aware that the types in Python code are strings in **lowercase**.
 2. Store necessary GIS data to "folder/data/raw" and modify `overwrite_shp.py` accordingly to adapt the columns of the shapefile
 3. Prepare shp.-file with prepare_for_bdew.py: this scripts adapts the shapefile using the functions in datamgmt to assign building age, building type etc.
 3. `python main.py`
-4. Results will be stored in "results".
+4. Parameters can be changed in "datamgmt/Parameters.py"
+5. Results will be stored in "results".
 
 ### Census file format
 Needs a csv file that links the GITTER_ID_ item to the census statistics. For an example of the file, see ./data/census/2024-08-12_zensus.csv.
