@@ -12,7 +12,7 @@ import os
 import pandas as pd
 
 from datamgmt import process_stock, setup_shapefile, typology, utils
-from datamgmt.parameters import Parameters as Params
+from datamgmt.Parameters import Parameters as Params
 
 
 # -----------------------------

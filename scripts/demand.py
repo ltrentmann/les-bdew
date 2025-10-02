@@ -11,7 +11,7 @@ import contextily as cx
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from datamgmt.parameters import Parameters as Params
+from datamgmt.Parameters import Parameters as Params
 
 def demand(
     df_shape, 

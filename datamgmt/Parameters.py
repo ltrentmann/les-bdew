@@ -11,7 +11,7 @@ import string
 import csv
 import pandas as pd
 
-EPSG = 25832  # 5243 or 25832 or 4326
+EPSG = 25832  # 5243 or 25832 or 4326 # Coordinate reference system
 
 
 class Parameters:

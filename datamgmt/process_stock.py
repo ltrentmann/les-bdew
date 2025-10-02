@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 
 from datamgmt.utils import flatten_gdf, import_csv
-from datamgmt.parameters import Parameters
+from datamgmt.Parameters import Parameters
 
 
 def sample_with_p(N, elements, weights):
