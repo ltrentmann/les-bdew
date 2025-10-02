@@ -79,7 +79,7 @@ def demand(
     df_shape['peak_heat'] = 0
 
     # Plot heat demand map
-    fig, ax = plt.subplots(figsize=(15, 10))
+    '''fig, ax = plt.subplots(figsize=(15, 10))
     df_shape.plot(column='total_heat', alpha=1, ax=ax, zorder=2)
     cx.add_basemap(
         ax,
@@ -97,7 +97,7 @@ def demand(
 
     # Save figure
     figure_path = os.path.join(base_dir, "figures", "building_demand.svg")
-    plt.savefig(figure_path, bbox_inches='tight')
+    plt.savefig(figure_path, bbox_inches='tight')'''
 
     # Optional: export updated shapefile
     shapefile_path = os.path.join(base_dir, "shapefiles", "building_demand.shp")
