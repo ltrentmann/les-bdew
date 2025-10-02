@@ -1,4 +1,4 @@
-# GIS-based heat demand calculation for german residential and nonresidential buildings
+# GIS-based bdew SLP calculation for german residential and nonresidential buildings
 
 ## Description
 
@@ -10,7 +10,7 @@ Package to generate heat and electricity timeseries with demandlib based on LOD2
 ## Workflow
 Here you can see the overall workflow of generating building specific load profiles for heat and electricity:
 
-![Overview](https://github.de/lennart.trentmann/les-bdew/-/main/description/2024-12-18_data-and-slp-calculation.drawio.svg "Overview")
+![Overview](https://github.com/ltrentmann/les-bdes/blob/main/description/2024-12-18_data-and-slp-calculation.drawio.svg "Overview")
 
 
 ## Timeseries calcualtion
@@ -73,9 +73,6 @@ Building class:
 
 The parameter ``building_class`` (German: Baualtersklasse) can assume values in the range 1-11.
 
-Electrical Profiles
-
-Description
 
 The electrical profiles are the standard load profiles from BDEW. All profiles
 have a resolution of 15 minutes. They are based on measurements in the German
@@ -105,7 +102,7 @@ Be aware that the types in Python code are strings in **lowercase**.
 
 ## Installation
 
-1. Create and activate enviroment. Example with anaconda:   `conda activate demand_calc`
+1. Create and activate enviroment. Example with anaconda:   `conda activate lesbdew`
 2. cd to folder with github clone
 3. `pip install -e .`
 
@@ -113,7 +110,7 @@ Be aware that the types in Python code are strings in **lowercase**.
 
 1. `cd "folder/main.py"`
 2. Store necessary GIS data to "folder/data/raw" and modify `overwrite_shp.py` accordingly to adapt the columns of the shapefile
-3. Prepare shp.-file with prepare_for_bdew.py: this scripts adapts the shapefile using the functions in datamgmt to assign building age, building type etc. (see CEA script Amedeo same preprocessing)
+3. Prepare shp.-file with prepare_for_bdew.py: this scripts adapts the shapefile using the functions in datamgmt to assign building age, building type etc.
 3. `python main.py`
 4. Results will be stored in "results".
 

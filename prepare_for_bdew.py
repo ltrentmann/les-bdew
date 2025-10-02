@@ -1,75 +1,91 @@
+# -*- coding: utf-8 -*-
 """
-Author: Amedeo Ceruti
-Contact: amedeo.ceruti@tum.de
+@author: Lennart Trentmann (lennart.trentmann@tum.de); 
+         Amedeo Ceruti (amedeo.ceruti@tum.de)
 
-
-Main script to process database data to import to demandlib. Crosses 
-with german Zensus 2011, Hausumriss dataset of german buildings.
+Main script to process building database data for demandlib. 
+Crosses with German Zensus 2011 and surroundings dataset of German buildings.
 """
+
 import logging
 import os
-
 import pandas as pd
 
 from datamgmt import process_stock, setup_shapefile, typology, utils
-from datamgmt.Parameters import Parameters as Params
+from datamgmt.parameters import Parameters as Params
 
 
-# path where raw input data of buildings is located
+# -----------------------------
+# Paths and constants
+# -----------------------------
 DATAPATH = './data/raw/example_raw_bdew.shp'
 ZENSUSPATH = './data/census/2024-08-12_census-processed.csv'
-# path to overall age distribution of buildings in the shapefile
 MUNICIPALITYAGESPATH = './data/census/2024-08-12_census-sum.csv'
 TABULAPATH = './databases/DE_TABULA_buildingtypes.csv'
 NONRESPATH = './databases/DE_type-to-IWU.csv'
+
 RUNID = "example"
+ZONEDIR = os.path.join('./inputdata', RUNID)
+BDEW_INIT_PATH = os.path.join(ZONEDIR, 'initialized_bdew_data.shp')
+ZONEPATH = os.path.join(ZONEDIR, 'bdew-orig.shp')
 
-# STORING
-# path where first gdf for values should be stored
-ZONEDIR = f'./inputdata/{RUNID}'  # directory for zone shape files
-# write and store file paths
-cea_init_path = f'{ZONEDIR}/initialized_bdew_data.shp'
-zonepath = f'{ZONEDIR}/bdew-orig.shp'
 
-def main(path_data, RUNID):
+# -----------------------------
+# Main processing function
+# -----------------------------
+def main(path_data, runid):
     """
-    Setup cea gdf and shapefile.
+    Setup BDEW GeoDataFrame and export shapefiles.
+
+    Parameters
+    ----------
+    path_data : str
+        Path to raw input shapefile of buildings.
+    runid : str
+        Unique identifier for this run (used for output folders).
     """
+
+    # Ensure output directories exist
     os.makedirs(ZONEDIR, exist_ok=True)
 
-    # init parameters object
-    params = Params(census_path=MUNICIPALITYAGESPATH, iwu_path=NONRESPATH)
+    # Initialize parameters
+    params = Params()
 
-    # set up the gdf for bdew
-    gdf_cea = setup_shapefile.compute_shapefile(
+    # Compute initial BDEW shapefile
+    gdf_bdew = setup_shapefile.compute_shapefile(
         importpath=path_data,
-        exportpath= cea_init_path,
-        params_dict=params.cea
-        )
+        exportpath=BDEW_INIT_PATH,
+        params_dict=params.bdew
+    )
 
-    # Update gdf for bdew with building age and type from zensus data
-    gdf_residential, gdf_nonres, gdf_surroundings =  process_stock.assign_categories(
-        gdf=gdf_cea,
+    # Assign building categories based on census and typology
+    gdf_residential, gdf_nonres, gdf_surroundings = process_stock.assign_categories(
+        gdf=gdf_bdew,
         zensus_path=ZENSUSPATH,
         tabula_path=TABULAPATH,
         nonres_path=NONRESPATH,
         parameters=params.zensus
     )
-    # merge residental and nonresidential
-    # subsitute this for concat gdf_stock = gdf_residential.append(gdf_nonres)
+
+    # Merge residential and non-residential buildings
     gdf_stock = pd.concat([gdf_residential, gdf_nonres], ignore_index=True)
 
-    # filter out areas from parameters file
-    gdf_stock, gdf_surroundings = utils.filter_area(gdf_stock, gdf_surroundings, params.zensus['AREA_FILTER'])
-    # flatten again
+    # Apply area filter from parameters
+    gdf_stock, gdf_surroundings = utils.filter_area(
+        gdf_stock, gdf_surroundings, params.zensus['AREA_FILTER']
+    )
+
+    # Flatten GeoDataFrame for consistency
     gdf_stock = utils.flatten_gdf(gdf_stock)
 
-    # save results in shapefiles
-    utils.export_to_shp(gdf_stock, zonepath, params.zensus['EPSG'])
-    logging.debug("Exported residential gdf to %s", zonepath)
+    # Export final shapefile
+    utils.export_to_shp(gdf_stock, ZONEPATH, params.zensus['EPSG'])
+    logging.debug("Exported residential GeoDataFrame to %s", ZONEPATH)
 
 
+# -----------------------------
+# Script execution
+# -----------------------------
 if __name__ == '__main__':
-
     print(f"Processing file {DATAPATH}")
     main(DATAPATH, RUNID)

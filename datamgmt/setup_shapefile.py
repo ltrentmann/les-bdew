@@ -1,123 +1,125 @@
 """
-Author: Amedeo Ceruti
-Contact: amedeo.ceruti@tum.de
-Date: 2022-09-02
+@author: Lennart Trentmann (lennart.trentmann@tum.de)
+         Amedeo Ceruti (amedeo.ceruti@tum.de)
 
-Sets up a script file to import to CEA: mainly adds height_ag, floors_ag and Name columns.
+Sets up a shapefile for import to BDEW: adds height_ag, floors_ag, Name, and age_code columns.
 
-Current assumptions:
-Cellar floors and height is a constant.
-Standard floor height is constant (change to TABULA category later)
+Assumptions:
+- Cellar floors and height are constant.
+- Standard floor height is constant (can be updated to TABULA category later).
 """
 
 import logging
 import warnings
-
-# import pandas as pd
 import geopandas as gpd
 import numpy as np
 
 from datamgmt.utils import import_shp, export_to_shp
 
 
-__author__ = "Amedeo Ceruti"
-# __copyright__ = "Copyright 2022, TU Munich"
-__credits__ = ["Amedeo Ceruti"]
-# __license__ = "MIT"
-__version__ = "0.1"
-__maintainer__ = "Amedeo Ceruti"
-__email__ = "amedeo.ceruti@tum.de"
-__status__ = "Dev"
-
-
-SHPCOLUMNS = ['GML_ID', 'USE_CALC', 'AREA_CALC', 'VOL_CALC', 'HEIGH_MEAS',
-    'HEIGH_CALC', 'CONSTRUCTI', 'CENS_GRID', 'geometry']
+SHPCOLUMNS = [
+    'GML_ID', 'USE_CALC', 'AREA_CALC', 'VOL_CALC', 'HEIGH_MEAS',
+    'HEIGH_CALC', 'CONSTRUCTI', 'CENS_GRID', 'geometry'
+]
 
 
 def init_gdf(gdf, params):
     """
-    Initializes needed columns for CEA to the imported geodataframe.
+    Initialize columns needed for BDEW in the imported GeoDataFrame.
+
+    Args:
+        gdf (GeoDataFrame): Input shapefile as a GeoDataFrame.
+        params (dict): Parameter dictionary with constants.
+
+    Returns:
+        GeoDataFrame: Updated GeoDataFrame with new columns.
     """
-
-    gdf.insert(0,'Name','')
-    gdf.insert(len(gdf.columns), 'height_ag', 0)
-    gdf.insert(len(gdf.columns), 'floors_ag', 0)
-    gdf.insert(len(gdf.columns), 'height_bg', params['HEIGHT_CELLAR'])
-    gdf.insert(len(gdf.columns), 'floors_bg', params['FLOORS_CELLAR'])
-    gdf.insert(len(gdf.columns), 'age_code', '')
-
-    # gdf.head()
+    gdf.insert(0, 'Name', '')
+    gdf['height_ag'] = 0
+    gdf['floors_ag'] = 0
+    gdf['height_bg'] = params['HEIGHT_CELLAR']
+    gdf['floors_bg'] = params['FLOORS_CELLAR']
+    gdf['age_code'] = ''
 
     return gdf
 
+
 def write_values(gdf, params):
     """
-    Computes and writes values for new geodataframe columns.
+    Computes and writes values for new GeoDataFrame columns: Name, height, and floors.
+
+    Args:
+        gdf (GeoDataFrame): Initialized GeoDataFrame with new columns.
+        params (dict): Parameter dictionary containing HEIGHT_FLOOR.
+
+    Returns:
+        GeoDataFrame: Updated GeoDataFrame with computed values.
     """
-    # iterate over rows and assign name, heights and floors
-    for index, row in gdf.iterrows():
-        # assign name since not all buildings have an GML_ID
-        gdf.loc[index, 'Name'] = 'B' + str(index)
-        try:
-            gdf.loc[index, 'age_code'] = row.CONSTRUCTI
-        except AttributeError:
-            logging.debug('CONSTRUCTI not in shapefile. Proceeding to insert dummy value')
-            # warnings.WarningMessage("CONSTRUCTI not in shapefile. Proceeding to insert dummy value")
-            gdf.loc[index, 'age_code'] = "E" #dummy vcalue and print warning
-        if ~np.isnan(row.HEIGH_CALC):
-            gdf.loc[index,'height_ag'] = row.HEIGH_CALC  # assign height
+    for idx, row in gdf.iterrows():
+        # Assign unique Name
+        gdf.at[idx, 'Name'] = f"B{idx}"
+
+        # Assign age_code from CONSTRUCTI if present, else dummy 'E'
+        if hasattr(row, 'CONSTRUCTI'):
+            gdf.at[idx, 'age_code'] = row.CONSTRUCTI
         else:
-            raise ValueError('CALC_H needs to be a real value')
+            logging.debug('CONSTRUCTI not in shapefile. Assigning dummy value "E".')
+            gdf.at[idx, 'age_code'] = 'E'
 
-        if ~np.isnan(row.STOREYS):
-            gdf.loc[index,'floors_ag'] = int(row.STOREYS)
+        # Assign height_ag
+        if not np.isnan(row.HEIGH_CALC):
+            gdf.at[idx, 'height_ag'] = row.HEIGH_CALC
         else:
-            gdf.loc[index,'floors_ag'] = row.HEIGH_CALC//params['HEIGHT_FLOOR']
-        # elif np.isnan(row.MEASURED_H) and ~np.isnan(row.HEIGHT_LOD):
-        #     gdf.loc[index,'height_ag'] = row.HEIGHT_LOD  # assign height
-        #     gdf.loc[index,'floors_ag'] = row.HEIGHT_LOD//params['HEIGHT_FLOOR']
+            raise ValueError('HEIGH_CALC must be a numeric value.')
 
-        # force overwriting of height
-        if gdf.loc[index, 'floors_ag'] < 1:
-            gdf.loc[index, 'floors_ag'] = 1
-    # gdf.head()
+        # Assign floors_ag
+        if hasattr(row, 'STOREYS') and not np.isnan(row.STOREYS):
+            gdf.at[idx, 'floors_ag'] = int(row.STOREYS)
+        else:
+            gdf.at[idx, 'floors_ag'] = row.HEIGH_CALC // params['HEIGHT_FLOOR']
 
-    if any(gdf['floors_ag'].isna()):
-        raise ValueError('Some buildings have nan as floor number. Check input data.')
+        # Ensure minimum 1 floor
+        if gdf.at[idx, 'floors_ag'] < 1:
+            gdf.at[idx, 'floors_ag'] = 1
+
+    if gdf['floors_ag'].isna().any():
+        raise ValueError('Some buildings have NaN as floor number. Check input data.')
 
     return gdf
 
 
 def compute_shapefile(importpath, exportpath, params_dict):
     """
-    Main script to setup the shapefile for CEA with constant height, Name and floor numbers.
+    Main script to prepare a shapefile for BDEW with constant height, Name, and floor numbers.
 
-    importpath: str. Where the input shapefile is located
-    exportpath: str or None. Where the output shapefile should be stored.
-    params: cea dictionary (see class Parameters)
+    Args:
+        importpath (str): Path to input shapefile.
+        exportpath (str or None): Path to export updated shapefile.
+        params_dict (dict): Parameter dictionary.
 
+    Returns:
+        GeoDataFrame: Updated shapefile GeoDataFrame ready for BDEW.
     """
-
-    # import shapefile
+    # Import shapefile
     gdf = import_shp(importpath, params_dict)
-    logging.debug('Imported file from {%s}', importpath)
+    logging.debug('Imported shapefile from %s', importpath)
 
-    # check required shappefile columns  TODO (check if this works)
-    if not all([k in gdf.columns.values for k in SHPCOLUMNS]):
-        raise ValueError(f"shapefile must must contain attributes {SHPCOLUMNS}")
+    # Check required columns
+    if not all(col in gdf.columns for col in SHPCOLUMNS):
+        raise ValueError(f"Shapefile must contain attributes: {SHPCOLUMNS}")
 
-    # Initialize columns for CEA
-    gdf2 = init_gdf(gdf, params_dict)
-    logging.debug('geodataframe initialized')
+    # Initialize columns
+    gdf = init_gdf(gdf, params_dict)
+    logging.debug('GeoDataFrame initialized with BDEW columns.')
 
-    # Overwrite LoD2-derived values. Assumption: constant height
-    gdf3 = write_values(gdf2, params_dict)
+    # Compute column values
+    gdf = write_values(gdf, params_dict)
 
-    # export
-    if exportpath is not None:
-        export_to_shp(gdf3, exportpath, params_dict['EPSG'])
-        logging.debug('exported shapefile to {%s}',exportpath)
-    elif exportpath is None:
-        logging.warning('no intermediate CEA shapefile exported')
+    # Export if path is provided
+    if exportpath:
+        export_to_shp(gdf, exportpath, params_dict['EPSG'])
+        logging.debug('Exported shapefile to %s', exportpath)
+    else:
+        logging.warning('No export path provided; shapefile not saved.')
 
-    return gdf3
+    return gdf

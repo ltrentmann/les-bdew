@@ -1,42 +1,49 @@
+# -*- coding: utf-8 -*-
 """
-Author: Lennart Trentmann
-Contact: lennart.trentmann@tum.de
-Date: 2023-11-22
+@author: Lennart Trentmann (lennart.trentmann@tum.de); 
+         Amedeo Ceruti (amedeo.ceruti@tum.de)
 
-Main script to generate ghd heat demand profile based on LOD2 data.
+Generate standard load profiles for heat and electricity in buildings based on LOD2 data 
+using the LES-BDEW approach via the demandlib package.
 """
-import demandlib.bdew as bdew
+
+import warnings
 import geopandas as gpd
+import demandlib.bdew as bdew
 import scripts.demand
 import scripts.timeseries_calculation
-from scripts.parameters import *
 
-# ignore future warning
-import warnings
+# Suppress future warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# specifiy input parameters in scripts/parameters.py
 
+# -----------------------------
+# Main execution
+# -----------------------------
 if __name__ == "__main__":
-    print('============================')
-    print('Performing demand caculation...')
-    print('============================\n')
+    print("============================")
+    print("Performing demand calculation...")
+    print("============================\n")
 
-    df_shape = gpd.read_file(f'inputdata/{RUNID}/bdew-orig.shp') 
-    demand = scripts.demand.demand(
+    # Parameters
+    RUNID = "example"
+    YEAR = 2022  # Year of demand profile
+
+    # Path to processed BDEW building data
+    DATAPATH = f'inputdata/{RUNID}/bdew-orig.shp'
+
+    # Load building shapefile
+    df_shape = gpd.read_file(DATAPATH)
+
+    # Calculate heat and electricity demand per building
+    demand_df = scripts.demand.demand(
         df_shape,
-        spez_heat_bj,
-        spez_elec_type,
-        bdew_mapping,
-        bdew_elec_mapping,
-        spez_hot_water_mapping,
-        alpha_mapping,
-        building_class_mapping,
-        RUNID
-    )
-    demand = scripts.timeseries_calculation.timeseries_calculation(
-        demand,
-        year,
         RUNID
     )
 
+    # Generate hourly timeseries based on BDEW standard load profiles
+    demand_timeseries = scripts.timeseries_calculation.timeseries_calculation(
+        demand_df,
+        YEAR,
+        RUNID
+    )

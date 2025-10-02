@@ -1,13 +1,11 @@
 """
-Author: Amedeo Ceruti
-Contact: amedeo.ceruti@tum.de
-Date: 2022-09-05
+@author: Lennart Trentmann (lennart.trentmann@tum.de)
+         Amedeo Ceruti (amedeo.ceruti@tum.de)
 
-returns a typology .dbf file of the imported building geodataframe.
+Returns a typology .dbf file of the imported building geodataframe.
 
 Format:
 
-```
 Name
 STANDARD
 YEAR
@@ -17,36 +15,34 @@ YEAR
 2ND_USE_R = 0
 3RD_USE = 'NONE'
 3RD_USE_R = 0
-```
 """
 
 import numpy as np
 
+
 def init(gdf):
-    """Initialize typology file with empty values."""
-    # copy gdf to work with it.
+    """Initialize typology file with default values."""
     gdf_2 = gdf.copy()
 
-    # initialize values, assumption: only single use buildings.
-    gdf_2.loc[:, '1ST_USE_R'] = np.ones([len(gdf)])
-    gdf_2.loc[:, '2ND_USE_R'] = np.zeros([len(gdf)])
-    gdf_2.loc[:, '3RD_USE_R'] = np.zeros([len(gdf)])
+    # Assumption: only single-use buildings by default
+    gdf_2.loc[:, '1ST_USE_R'] = np.ones(len(gdf))
+    gdf_2.loc[:, '2ND_USE_R'] = np.zeros(len(gdf))
+    gdf_2.loc[:, '3RD_USE_R'] = np.zeros(len(gdf))
     gdf_2.loc[:, '1ST_USE'] = 'MULTI_RES'
     gdf_2.loc[:, '2ND_USE'] = 'NONE'
     gdf_2.loc[:, '3RD_USE'] = 'NONE'
-    gdf_2.loc[:, 'YEAR'] = np.ones([len(gdf)])*1800
+    gdf_2.loc[:, 'YEAR'] = np.ones(len(gdf)) * 1800
+
     return gdf_2
 
 
 def assign(gdf, params):
     """
-    Set building use depending on TABULA standard and mapping in parameters 
-    dictionary.
+    Set building use depending on TABULA standard and mapping in parameters dictionary.
     """
-    # copy gdf to work with it.
     gdf_2 = gdf.copy(deep=True)
-    # iterate over rows and assign depending on case
-    # map params values to keys in gdf.
+
+    # Assign use types based on building type
     for type_, uses in params['use_types'].items():
         if len(uses) == 1:
             gdf_2.loc[gdf_2['type_code'] == type_, '1ST_USE'] = uses[0]
@@ -65,31 +61,31 @@ def assign(gdf, params):
         else:
             raise ValueError('Too many uses for one building, maximum is 3.')
 
+    # Map building ages to YEAR
     for row, value in gdf.iterrows():
-        for i in params['tabula_ages']:
-            if i[0] == value.age_code:
-                gdf_2.loc[row, 'YEAR'] = i[1]
+        for age_code, year in params['tabula_ages']:
+            if age_code == value.age_code:
+                gdf_2.loc[row, 'YEAR'] = year
+
     return gdf_2
 
 
 def compute(gdf, params):
     """
-    main function which computes the typology file from a geodataframe.
+    Main function to compute the typology file from a geodataframe.
     """
-    # column names to conserve in .dbf file
+    # Columns to keep in .dbf
     cols = [
         'Name', 'STANDARD', 'YEAR',
         '1ST_USE_R', '2ND_USE_R', '3RD_USE_R',
         '1ST_USE', '2ND_USE', '3RD_USE'
-        ]
+    ]
 
-    # filter
-    # gdf = gdf.loc[gdf.FUNCTION_N.str.contains('Wohngeb'), :]
-
-    # apply uses function
+    # Initialize default values
     gdf_2 = init(gdf)
 
-    # filter out columns we want to conserve in typology file
+    # Assign building uses
     gdf_typology = assign(gdf_2, params)
 
+    # Return only desired columns
     return gdf_typology.loc[:, cols]
