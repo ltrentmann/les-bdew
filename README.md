@@ -13,7 +13,7 @@ If you use les-bdew, please cite:
 
 ## Contents
 
-- [les-bdew](#les-bdew: GIS-based bdew SLP calculation for german residential and nonresidential buildings)
+- [les-bdew: GIS-based bdew SLP calculation for german residential and nonresidential buildings](#les-bdew)
   - [Intro](#Intro)
   - [Contents](#contents)
   - [Workflow](#worklfow)
