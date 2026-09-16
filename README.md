@@ -1,11 +1,31 @@
-# GIS-based bdew SLP calculation for german residential and nonresidential buildings
-
-## Description
-
+# les-bdew: GIS-based bdew SLP calculation for german residential and nonresidential buildings
 Package to generate heat and electricity timeseries with demandlib based on LOD2 database
 
-- Date: 02.10.2025
-- Project: <https://www.enargus.de/pub/bscw.cgi/?op=enargus.eps2&q=HEAT2Q&v=10&id=8909299>
+## Intro 
+les-bdew is a GIS-based, bottom-up approach for estimating the annual heat demand of residential and non-residential buildings in Germany. It also generates building-specific heat-demand time series using standardized load profiles provided by the Python package demandlib.
+
+For more details refer to the original research paper:
+>  Ceruti, Amedeo and Trentmann, Lennart and Tataranni, Urbano and Schweiger, Benedikt and Spliethoff, Hartmut, Performance of urban building energy models and its implications for district heating network design optimization, Energy, 360, 2026, 141600, 10.1016/j.energy.2026.141600
+
+## How to cite
+If you use les-bdew, please cite:
+>  Ceruti, Amedeo and Trentmann, Lennart and Tataranni, Urbano and Schweiger, Benedikt and Spliethoff, Hartmut, Performance of urban building energy models and its implications for district heating network design optimization, Energy, 360, 2026, 141600, 10.1016/j.energy.2026.141600
+
+## Contents
+
+- [les-bdew](#les-bdew: GIS-based bdew SLP calculation for german residential and nonresidential buildings)
+  - [Intro](#Intro)
+  - [Contents](#contents)
+  - [Workflow](#worklfow)
+  - [Timeseries calcualtion](#Timeseries-calcualtion)
+  - [Description of timeseries generation according to demandlib](#Description)
+  - [Timeseries Preprocessing](#description-Pre)
+  - [Install](#install)
+  - [Usage](#usage)
+        - [Census file format](#census-format)
+        - [Shapefile input format](#shaep-format)
+  - [Contribute](#contribute)
+  - [License](#license)
 
 ## Workflow
 Here you can see the overall workflow of generating building specific load profiles for heat and electricity:
@@ -100,7 +120,7 @@ Be aware that the types in Python code are strings in **lowercase**.
 | **H0/H0_dyn**:, "Household/dynamic houshold",<br />
 
 
-## Installation
+## Install
 
 1. Create and activate enviroment. Example with anaconda:   `conda activate bdewles`
 2. cd to folder with github clone
@@ -123,23 +143,8 @@ Needs to be a shapefile with columns:
 ['GML_ID', 'USE_CALC', 'AREA_CALC', 'VOL_CALC', 'HEIGH_MEAS', 'HEIGH_CALC', 'CONSTRUCTI', 'CENS_GRID', 'geometry']
 If not, change with the script in ./data/raw-data/overwrite_shp.py.
 
-## Support
+## Contribe
+Contributions are welcome! Please open issues to discuss proposed changes or features before submitting pull requests. This helps ensure alignment with project goals
 
-- Post an issue
-- Contact the authors
-
-## Contributing
-
-- Open a detailed pull request and email the authors.
-
-## Authors and acknowledgment
-
-- Lennart Trentmann (lennart.trentmann@tum.de)
-- Amedeo Ceruti (amedeo.ceruti@tum.de)
-- Benedikt Schweiger (benedikt.schweiger@tum.de)
-
-Acknowledgement: the Heat2Q project partners for their ongoing feedback.
-
-## Project status
-
-In development until early 2026.
+## Licence 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
